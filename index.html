@@ -3,89 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kadijatu Mansaray | Software Engineer</title>
+    <title>Kadijatu Mansaray | Systems & Data Engineer</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap');
-        :root { --bg-dark: #030305; --accent-violet: #8b5cf6; }
-        body { font-family: 'Outfit', sans-serif; background-color: var(--bg-dark); color: #cbd5e1; overflow-x: hidden; scroll-behavior: smooth; }
-        .bg-mesh {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.12) 0%, transparent 40%),
-                        radial-gradient(circle at 80% 70%, rgba(14, 165, 233, 0.08) 0%, transparent 40%),
-                        radial-gradient(circle at 50% 50%, #030305 0%, #0a0a15 100%);
-            z-index: -1; animation: meshMove 20s ease-in-out infinite alternate;
+        
+        :root {
+            --bg-main: #0B0F14;
+            --bg-sec: #121821;
+            --text-pri: #FFFFFF; /* Brightened from E6EDF3 */
+            --text-muted: #A1AAB8; /* Brightened from 9AA4B2 */
+            --accent-gold: #E0B973;
+            --accent-mint: #7ED3B2;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
-        @keyframes meshMove { 0% { transform: scale(1); } 100% { transform: scale(1.1); } }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-15px); } }
-        .animate-float { animation: float 6s ease-in-out infinite; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-pri);
+            scroll-behavior: smooth;
+        }
+
+        .gold-gradient {
+            background: linear-gradient(135deg, #F3D9A9 0%, #E0B973 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
         .glass-card {
-            background: rgba(255, 255, 255, 0.02); backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.05); transition: all 0.4s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .glass-card:hover { border-color: var(--accent-violet); transform: translateY(-10px); background: rgba(139, 92, 246, 0.05); box-shadow: 0 0 30px rgba(139, 92, 246, 0.2); }
-        .violet-gradient { background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        .glass-card:hover {
+            border-color: var(--accent-gold);
+            transform: translateY(-8px);
+            background: rgba(224, 185, 115, 0.05);
+        }
+
+        /* Nav Hover Glow */
+        .nav-link {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-link:hover {
+            color: var(--accent-gold);
+            text-shadow: 0 0 15px rgba(224, 185, 115, 0.4);
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: linear-gradient(to right, var(--accent-gold), var(--accent-mint));
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after { width: 100%; }
+
+        /* Slideshow Layout */
+        .project-container {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 24px;
+            padding: 20px 0;
+            scrollbar-width: none;
+        }
+        .project-container::-webkit-scrollbar { display: none; }
+
+        .project-card {
+            min-width: 340px;
+            max-width: 340px;
+            scroll-snap-align: start;
+        }
+
+        .tag-mint {
+            font-size: 10px;
+            padding: 4px 12px;
+            border-radius: 6px;
+            background: rgba(126, 211, 178, 0.1);
+            color: var(--accent-mint);
+            border: 1px solid rgba(126, 211, 178, 0.2);
+            font-family: 'Fira Code', monospace;
+        }
+
         .mono { font-family: 'Fira Code', monospace; }
+        
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--glass-border), transparent);
+        }
+
+        .scroll-indicator {
+            width: 100%;
+            height: 2px;
+            background: var(--glass-border);
+            margin-top: 20px;
+            position: relative;
+        }
+        .scroll-progress {
+            height: 100%;
+            background: var(--accent-gold);
+            width: 25%;
+            transition: 0.3s;
+        }
+
+        /* CV Specifics */
+        .cv-grid-item {
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1.5rem 0;
+        }
+        .cv-grid-item:last-child { border-bottom: none; }
     </style>
 </head>
 <body>
-    <div class="bg-mesh"></div>
+
+    <!-- Background Decoration -->
+    <div class="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+        <div class="absolute top-[10%] right-[10%] w-[40vw] h-[40vw] bg-[#E0B973]/5 rounded-full blur-[140px]"></div>
+        <div class="absolute bottom-[10%] left-[5%] w-[30vw] h-[30vw] bg-[#7ED3B2]/5 rounded-full blur-[120px]"></div>
+    </div>
+
+    <!-- Navigation -->
     <nav class="fixed w-full z-50 px-8 py-8 flex justify-between items-center mix-blend-difference">
-        <div class="text-2xl font-black text-white">KM<span class="text-violet-500">.</span></div>
-        <div class="flex gap-8 text-[10px] uppercase tracking-widest font-bold text-slate-400">
-            <a href="#lab" class="hover:text-violet-400">Projects</a>
-            <a href="https://github.com/Firstina802/Kadijatu-s-Portfolio.git" target="_blank" class="hover:text-violet-400">GitHub</a>
-            <a href="mailto:Kadijatu.mansaray@student.aiu.edu.my" class="text-white border-b border-violet-500">Hire Me</a>
+        <div class="text-2xl font-black text-white tracking-tighter">KM<span class="text-[#E0B973]">.</span></div>
+        <div class="flex gap-8 text-[11px] uppercase tracking-[0.3em] font-bold text-white/80">
+            <a href="#about" class="nav-link">About</a>
+            <a href="#projects" class="nav-link">Lab</a>
+            <a href="#cv" class="nav-link">CV</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </div>
     </nav>
-    <section class="min-h-screen flex flex-col justify-center px-8">
+
+    <!-- Hero Section -->
+    <section class="min-h-screen flex flex-col justify-center px-8 relative z-10">
         <div class="max-w-6xl mx-auto w-full">
-            <div class="animate-float inline-flex items-center gap-3 mb-8 px-4 py-2 rounded-full glass-card">
+            <div class="inline-flex items-center gap-3 mb-10 px-5 py-2 rounded-full glass-card">
                 <span class="relative flex h-2 w-2">
-                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-violet-400 opacity-75"></span>
-                    <span class="relative inline-flex rounded-full h-2 w-2 bg-violet-500"></span>
+                    <span class="animate-ping absolute h-full w-full rounded-full bg-[#7ED3B2] opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-[#7ED3B2]"></span>
                 </span>
-                <span class="text-[10px] font-bold uppercase text-violet-300 tracking-widest">Available for Internship — March 2026</span>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-[#7ED3B2]">Available for Internship 2026</span>
             </div>
-            <h1 class="text-6xl md:text-[100px] font-extrabold tracking-tighter leading-none text-white mb-10">
-                Data <br><span class="violet-gradient italic">Architect.</span><br>Code <span class="opacity-40">Artisan.</span>
+            
+            <h1 class="text-6xl md:text-[100px] font-extrabold tracking-tighter leading-[0.95] text-white mb-12">
+                Hi, I'm Kadijatu.<br>
+                <span class="gold-gradient italic">I build systems</span><br>
+                that think.
             </h1>
-            <p class="text-xl text-slate-400 max-w-xl mb-10 font-light leading-relaxed">
-                Computer Science student @ AIU. Transforming complex signals into intelligent systems using <span class="text-white">Python, Java, and Google Cloud</span>.
+
+            <div class="grid md:grid-cols-2 gap-10 items-end">
+                <p class="text-xl text-[#A1AAB8] leading-relaxed font-light max-w-xl">
+                    A Computer Science student bridging the gap between <span class="text-white">scalable architecture</span> and <span class="text-white">intelligent data insights</span>. Seeking to solve complex problems through code.
+                </p>
+                <div class="flex flex-col gap-3 text-[11px] mono text-[#A1AAB8] md:items-end uppercase tracking-widest">
+                    <span>// Focus: Software & Data Engineering</span>
+                    <span>// Location: Malaysia / Remote</span>
+                    <span>// Goal: Internship Mar - Aug 2026</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="section-divider"></div>
+
+    <!-- About Section -->
+    <section id="about" class="py-32 px-8 bg-[#121821]/20">
+        <div class="max-w-6xl mx-auto grid md:grid-cols-3 gap-16">
+            <div class="md:col-span-1">
+                <h2 class="text-4xl font-bold text-white mb-6 italic">The Philosophy</h2>
+                <div class="h-1 w-20 bg-[#E0B973]"></div>
+            </div>
+            <div class="md:col-span-2 space-y-8">
+                <p class="text-lg text-[#A1AAB8] leading-relaxed">
+                    I don't just write scripts; I design environments. My background in Data Science allows me to treat data as a living part of an application, while my engineering mindset ensures those applications are robust, secure, and ready to scale.
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="p-6 glass-card rounded-2xl">
+                        <span class="text-[#E0B973] font-bold block mb-2 uppercase text-xs">Technical Arsenal</span>
+                        <p class="text-sm text-[#A1AAB8] mono tracking-tight">Java, Python, SQL, REST APIs, FastAPI</p>
+                    </div>
+                    <div class="p-6 glass-card rounded-2xl">
+                        <span class="text-[#7ED3B2] font-bold block mb-2 uppercase text-xs">Intelligence</span>
+                        <p class="text-sm text-[#A1AAB8] mono tracking-tight">Whisper STT, NLP, ETL, Scikit-Learn</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Slideshow Section -->
+    <section id="projects" class="py-32 px-8 overflow-hidden">
+        <div class="max-w-6xl mx-auto">
+            <div class="mb-16 flex justify-between items-end">
+                <div>
+                    <h2 class="text-4xl font-bold text-white mb-4 uppercase tracking-tighter">Project Lab</h2>
+                    <p class="text-[#A1AAB8] text-sm tracking-widest mono italic">The Engineering Portfolio</p>
+                </div>
+                <div class="hidden md:block text-[10px] mono text-[#E0B973] uppercase tracking-widest">
+                    Swipe or Scroll &rarr;
+                </div>
+            </div>
+
+            <div class="project-container" id="pContainer">
+                <div class="project-card glass-card p-10 rounded-[2rem] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-8">
+                            <i class="fa-solid fa-microphone-lines text-4xl text-[#E0B973]"></i>
+                            <span class="tag-mint">REAL-TIME NLP</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Sermon AI</h3>
+                        <p class="text-sm text-[#A1AAB8] leading-relaxed mb-8">
+                            Architected a speech-to-text pipeline using OpenAI Whisper for live translation and subtitle generation.
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[10px] mono text-[#E0B973]">#FASTAPI</span>
+                        <span class="text-[10px] mono text-[#E0B973]">#NLLB-200</span>
+                    </div>
+                </div>
+
+                <div class="project-card glass-card p-10 rounded-[2rem] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-8">
+                            <i class="fa-solid fa-database text-4xl text-[#7ED3B2]"></i>
+                            <span class="tag-mint">BIG DATA</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">HarvardX ETL</h3>
+                        <p class="text-sm text-[#A1AAB8] leading-relaxed mb-8">
+                            Cleaned and visualized 85k learner records to map engagement patterns and churn rates.
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[10px] mono text-[#E0B973]">#SEABORN</span>
+                        <span class="text-[10px] mono text-[#E0B973]">#PANDAS</span>
+                    </div>
+                </div>
+
+                <div class="project-card glass-card p-10 rounded-[2rem] flex flex-col justify-between border-[#E0B973]/30">
+                    <div>
+                        <div class="flex justify-between items-start mb-8">
+                            <i class="fa-solid fa-code text-4xl text-[#E0B973]"></i>
+                            <span class="tag-mint">SYSTEMS</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Stock Engine</h3>
+                        <p class="text-sm text-[#A1AAB8] leading-relaxed mb-8">
+                            A Java-based inventory system built with deep OOP principles for transaction integrity.
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[10px] mono text-[#E0B973]">#JAVA</span>
+                        <span class="text-[10px] mono text-[#E0B973]">#MVC</span>
+                    </div>
+                </div>
+
+                <div class="project-card glass-card p-10 rounded-[2rem] flex flex-col justify-between">
+                    <div>
+                        <div class="flex justify-between items-start mb-8">
+                            <i class="fa-solid fa-shield-halved text-4xl text-[#7ED3B2]"></i>
+                            <span class="tag-mint">RISK MGMT</span>
+                        </div>
+                        <h3 class="text-2xl font-bold text-white mb-4">Fraud Detect</h3>
+                        <p class="text-sm text-[#A1AAB8] leading-relaxed mb-8">
+                            Classification model detecting fraudulent transactions using ensemble learning methods.
+                        </p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="text-[10px] mono text-[#E0B973]">#SKLEARN</span>
+                        <span class="text-[10px] mono text-[#E0B973]">#LOGIC</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="scroll-indicator">
+                <div class="scroll-progress" id="pProgress"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CV / Timeline Section -->
+    <section id="cv" class="py-32 px-8">
+        <div class="max-w-6xl mx-auto">
+            <div class="flex flex-col md:flex-row gap-20">
+                <div class="md:w-1/3">
+                    <h2 class="text-4xl font-bold text-white mb-8 tracking-tighter">Curriculum <br><span class="text-[#E0B973]">Vitae</span></h2>
+                    <p class="text-sm text-[#A1AAB8] leading-relaxed mb-10">
+                        A quick overview of my academic milestones and leadership roles. Driven by a consistent 5-semester Dean's List streak.
+                    </p>
+                    <a href="mailto:Kadijatu.mansaray@student.aiu.edu.my" class="inline-block px-8 py-4 border border-[#E0B973] text-[#E0B973] text-xs font-bold uppercase tracking-widest hover:bg-[#E0B973] hover:text-black transition-all">Request Full Resume</a>
+                </div>
+                
+                <div class="md:w-2/3">
+                    <div class="cv-grid-item">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-xl">Albukhary International University</h4>
+                            <span class="text-[#7ED3B2] mono text-xs uppercase tracking-tighter">2023 - Present</span>
+                        </div>
+                        <p class="text-sm text-[#A1AAB8]">Bachelor of Computer Science (Data Science) &bull; GPA: 3.55/4.00</p>
+                        <p class="text-xs text-[#E0B973] mt-2 mono font-bold">// 5x Consecutive Dean's List Award</p>
+                    </div>
+
+                    <div class="cv-grid-item">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-xl">Student Representative Council</h4>
+                            <span class="text-[#7ED3B2] mono text-xs uppercase tracking-tighter">Apr 2025 - Present</span>
+                        </div>
+                        <p class="text-sm text-[#A1AAB8]">General Secretary</p>
+                        <p class="text-xs text-white/40 mt-2">Managing governance and administration for 500+ international students.</p>
+                    </div>
+
+                    <div class="cv-grid-item">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-xl">Tina's Specialty</h4>
+                            <span class="text-[#7ED3B2] mono text-xs uppercase tracking-tighter">Aug 2024 - Present</span>
+                        </div>
+                        <p class="text-sm text-[#A1AAB8]">Founder & Tech Lead</p>
+                        <p class="text-xs text-white/40 mt-2">Managing campus business operations alongside rigorous academic load.</p>
+                    </div>
+
+                    <div class="cv-grid-item">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-xl">Certifications</h4>
+                        </div>
+                        <div class="flex flex-wrap gap-3 mt-3">
+                            <span class="tag-mint">Google Cloud Certified</span>
+                            <span class="tag-mint">Django REST Framework</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact" class="py-32 text-center px-8 border-t border-white/5">
+        <h2 class="text-5xl md:text-8xl font-black text-white/5 mb-16 tracking-tighter uppercase">Let's Build</h2>
+        <div class="flex flex-wrap justify-center gap-12 text-[12px] font-bold uppercase tracking-[0.4em] mb-20 text-[#A1AAB8]">
+            <a href="https://github.com/Firstina802/Kadijatu-s-Portfolio.git" target="_blank" class="hover:text-[#E0B973] transition-all">GitHub</a>
+            <a href="mailto:Kadijatu.mansaray@student.aiu.edu.my" class="hover:text-[#E0B973] transition-all">Email</a>
+            <a href="#" class="hover:text-[#E0B973] transition-all">LinkedIn</a>
+        </div>
+        <div class="max-w-md mx-auto mb-10">
+            <p class="text-xs text-[#A1AAB8] italic opacity-60 leading-relaxed">
+                Currently seeking an internship in software development, data science, or AI-driven roles. Based in Alor Setar, Kedah.
             </p>
         </div>
-    </section>
-    <section id="lab" class="py-20 px-8">
-        <div class="max-w-6xl mx-auto grid md:grid-cols-2 gap-8">
-            <div class="glass-card p-10 rounded-3xl">
-                <i class="fa-solid fa-microphone-lines text-3xl text-violet-500 mb-6"></i>
-                <h3 class="text-2xl font-bold text-white mb-4">Sermon AI Translator</h3>
-                <p class="text-slate-400 mb-6 font-light">Real-time NMT pipeline using FastAPI, Whisper, and Meta NLLB for live multilingual subtitles.</p>
-                <div class="flex gap-2 text-[10px] mono text-violet-300"><span>#FASTAPI</span> <span>#NLP</span></div>
-            </div>
-            <div class="glass-card p-10 rounded-3xl">
-                <i class="fa-solid fa-chart-pie text-3xl text-blue-400 mb-6"></i>
-                <h3 class="text-2xl font-bold text-white mb-4">85k Big Data ETL</h3>
-                <p class="text-slate-400 mb-6 font-light">Analyzed HarvardX datasets using Seaborn to identify learner disengagement trends.</p>
-                <div class="flex gap-2 text-[10px] mono text-blue-300"><span>#PYTHON</span> <span>#DATA_SCIENCE</span></div>
-            </div>
-            <div class="glass-card p-10 rounded-3xl">
-                <i class="fa-solid fa-code text-3xl text-orange-400 mb-6"></i>
-                <h3 class="text-2xl font-bold text-white mb-4">Java Inventory Engine</h3>
-                <p class="text-slate-400 mb-6 font-light">Robust desktop system built with deep OOP principles (Inheritance & Encapsulation).</p>
-                <div class="flex gap-2 text-[10px] mono text-orange-300"><span>#JAVA</span> <span>#OOP</span></div>
-            </div>
-            <div class="glass-card p-10 rounded-3xl">
-                <i class="fa-solid fa-shield-halved text-3xl text-emerald-400 mb-6"></i>
-                <h3 class="text-2xl font-bold text-white mb-4">Fraud Detection AI</h3>
-                <p class="text-slate-400 mb-6 font-light">Predictive classification model for financial risk mitigation using Scikit-Learn.</p>
-                <div class="flex gap-2 text-[10px] mono text-emerald-300"><span>#ML</span> <span>#PYTHON</span></div>
-            </div>
-        </div>
-    </section>
-    <footer class="py-20 text-center">
-        <p class="mono text-[10px] uppercase tracking-[0.5em] text-slate-600">Kadijatu Mansaray &bull; 2026 &bull; 5x Dean's List Scholar</p>
+        <p class="mono text-[8px] text-[#A1AAB8]/30 uppercase tracking-[0.8em]">Designed with Integrity &bull; Kadijatu Mansaray &bull; 2026</p>
     </footer>
+
+    <script>
+        const container = document.getElementById('pContainer');
+        const progress = document.getElementById('pProgress');
+
+        container.addEventListener('scroll', () => {
+            const max = container.scrollWidth - container.clientWidth;
+            const percent = (container.scrollLeft / max) * 100;
+            progress.style.width = percent + '%';
+        });
+
+        // Smooth Appearance on Scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('opacity-100');
+                    entry.target.classList.remove('translate-y-10');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.glass-card, .cv-grid-item').forEach(el => {
+            el.classList.add('opacity-0', 'translate-y-10', 'transition-all', 'duration-700');
+            observer.observe(el);
+        });
+    </script>
 </body>
 </html>
